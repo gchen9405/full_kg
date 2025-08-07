@@ -167,8 +167,6 @@ else:
 # --- Index the input file ---
 # Check if indexing is already complete by looking for output files
 output_dir = os.path.join(WORKSPACE, "output")
-indexing_complete = False
-
 
 print("[INFO] Indexing input file with GraphRAG...")
 # Set environment variable to disable numba caching to avoid hyppo library issues
