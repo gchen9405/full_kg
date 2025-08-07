@@ -1,0 +1,163 @@
+
+-Goal-
+Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
+
+-Steps-
+1. Identify all entities. For each identified entity, extract the following information:
+- entity_name: Name of the entity, capitalized
+- entity_type: One of the following types: [law, government official, military installation, foreign country, trade policy, legal amendment, national emergency, economic policy, reserve component, actuarial basis]
+- entity_description: Comprehensive description of the entity's attributes and activities
+Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
+
+2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
+For each pair of related entities, extract the following information:
+- source_entity: name of the source entity, as identified in step 1
+- target_entity: name of the target entity, as identified in step 1
+- relationship_description: explanation as to why you think the source entity and the target entity are related to each other
+- relationship_strength: an integer score between 1 to 10, indicating strength of the relationship between the source entity and target entity
+Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
+
+3. Return output in English as a single list of all the entities and relationships identified in steps 1 and 2. Use **{record_delimiter}** as the list delimiter.
+
+4. If you have to translate into English, just translate the descriptions, nothing else!
+
+5. When finished, output {completion_delimiter}.
+
+-Examples-
+######################
+
+Example 1:
+
+entity_types: [law, government official, military installation, foreign country, trade policy, legal amendment, national emergency, economic policy, reserve component, actuarial basis]
+text:
+Adjustment of Status of Certain Nationals of People's Republic of China 
+ Pub. L. 102–404, Oct. 9, 1992, 106 Stat. 1969, provided that:
+------------------------
+output:
+("entity"{tuple_delimiter}ADJUSTMENT OF STATUS OF CERTAIN NATIONALS OF PEOPLE'S REPUBLIC OF CHINA{tuple_delimiter}law{tuple_delimiter}A law enacted as Public Law 102–404 on October 9, 1992, with the statute number 106 Stat. 1969, which provides for the adjustment of status for certain nationals of the People's Republic of China)
+{record_delimiter}
+("entity"{tuple_delimiter}PEOPLE'S REPUBLIC OF CHINA{tuple_delimiter}foreign country{tuple_delimiter}A sovereign state in East Asia, the world's most populous country, which is referenced in the context of a U.S. law regarding the adjustment of status for certain of its nationals)
+{record_delimiter}
+("relationship"{tuple_delimiter}ADJUSTMENT OF STATUS OF CERTAIN NATIONALS OF PEOPLE'S REPUBLIC OF CHINA{tuple_delimiter}PEOPLE'S REPUBLIC OF CHINA{tuple_delimiter}The law pertains specifically to certain nationals of the People's Republic of China, indicating a direct relationship between the legislation and the country{tuple_delimiter}10)
+{completion_delimiter}
+#############################
+
+
+Example 2:
+
+entity_types: [law, government official, military installation, foreign country, trade policy, legal amendment, national emergency, economic policy, reserve component, actuarial basis]
+text:
+"(E) If a military installation to be closed, realigned, or placed in an inactive status under this part includes a road used for public access through, into, or around the installation, the Secretary of Defense shall consult with the Governor of the State and the heads of the local governments concerned for the purpose of considering the continued availability of the road for public use after the installation is closed, realigned, or placed in an inactive status. 
+ "(3)(A) Not later than 6 months after the date of approval of the closure or realignment of a military installation under this part, the Secretary, in consultation with the redevelopment authority with respect to the installation, shall— 
+ "(i) inventory the personal property located at the installation; and
+------------------------
+output:
+("entity"{tuple_delimiter}MILITARY INSTALLATION{tuple_delimiter}military installation{tuple_delimiter}A military installation subject to closure, realignment, or being placed in an inactive status, which includes a road used for public access})
+{record_delimiter}
+("entity"{tuple_delimiter}SECRETARY OF DEFENSE{tuple_delimiter}government official{tuple_delimiter}The official responsible for consulting with the Governor of the State and local government heads regarding the public use of roads through military installations being closed, realigned, or placed in an inactive status})
+{record_delimiter}
+("entity"{tuple_delimiter}GOVERNOR OF THE STATE{tuple_delimiter}government official{tuple_delimiter}State official consulted by the Secretary of Defense about the continued public use of roads through military installations being affected})
+{record_delimiter}
+("entity"{tuple_delimiter}REDEVELOPMENT AUTHORITY{tuple_delimiter}government official{tuple_delimiter}Authority consulted by the Secretary of Defense for inventorying personal property at a military installation undergoing closure or realignment})
+{record_delimiter}
+("relationship"{tuple_delimiter}SECRETARY OF DEFENSE{tuple_delimiter}MILITARY INSTALLATION{tuple_delimiter}The Secretary of Defense is responsible for consulting about the future of military installations and their public road access{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}SECRETARY OF DEFENSE{tuple_delimiter}GOVERNOR OF THE STATE{tuple_delimiter}The Secretary of Defense consults with the Governor regarding military installations' road access for public use{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}MILITARY INSTALLATION{tuple_delimiter}GOVERNOR OF THE STATE{tuple_delimiter}The Governor is involved in discussions about the public use of roads through military installations being closed or realigned{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}SECRETARY OF DEFENSE{tuple_delimiter}REDEVELOPMENT AUTHORITY{tuple_delimiter}The Secretary of Defense works with the Redevelopment Authority to inventory personal property at closing or realigning military installations{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}MILITARY INSTALLATION{tuple_delimiter}REDEVELOPMENT AUTHORITY{tuple_delimiter}The Redevelopment Authority is involved in the inventory of personal property at military installations undergoing changes{tuple_delimiter}7)
+{completion_delimiter}
+#############################
+
+
+Example 3:
+
+entity_types: [law, government official, military installation, foreign country, trade policy, legal amendment, national emergency, economic policy, reserve component, actuarial basis]
+text:
+(g) Materials for construction and equipment of vessels built for foreigners 
+ The provisions of this section shall apply to materials imported and used in the construction and equipment of vessels built for foreign account and ownership, or for the government of any foreign country, notwithstanding that such vessels may not within the strict meaning of the term be articles exported.
+------------------------
+output:
+("entity"{tuple_delimiter}MATERIALS FOR CONSTRUCTION AND EQUIPMENT OF VESSELS{tuple_delimiter}law{tuple_delimiter}This law applies to materials imported and used in the construction and equipment of vessels built for foreign account and ownership, or for the government of any foreign country)
+{record_delimiter}
+("entity"{tuple_delimiter}FOREIGN COUNTRY{tuple_delimiter}foreign country{tuple_delimiter}Countries other than the one enacting the law, for which vessels may be built under the provisions of this section)
+{record_delimiter}
+("relationship"{tuple_delimiter}MATERIALS FOR CONSTRUCTION AND EQUIPMENT OF VESSELS{tuple_delimiter}FOREIGN COUNTRY{tuple_delimiter}The law specifically applies to vessels built for the account, ownership, or government of a foreign country{tuple_delimiter}10)
+{completion_delimiter}
+#############################
+
+
+Example 4:
+
+entity_types: [law, government official, military installation, foreign country, trade policy, legal amendment, national emergency, economic policy, reserve component, actuarial basis]
+text:
+(2) To the extent that subjects referred to in paragraph (1)(A), (B), or (C) are covered in the national trade policy agenda required under subsection (a)(1)(B) or in other reports required by this chapter or other law, the Trade Representative and the Secretary of the Treasury may, as appropriate, draw on the information, analysis, and conclusions, if any, in those reports for the purposes of preparing the report required by this subsection. 
+ (3) The Trade Representative and the Secretary of the Treasury shall consult with the Chairman of the Board of Governors of the Federal Reserve System in the preparation of each report required under this subsection. 
+ (4) The Trade Representative and the Secretary of the Treasury may separately submit any information, analysis, or conclusion referred to in paragraph (1) to the Committees in confidence if the Trade Representative and the Secretary consider confidentiality appropriate.
+------------------------
+output:
+("entity"{tuple_delimiter}NATIONAL TRADE POLICY AGENDA{tuple_delimiter}trade policy{tuple_delimiter}A policy agenda required under specific legislative subsections, which the Trade Representative and the Secretary of the Treasury may reference for preparing certain reports})
+{record_delimiter}
+("entity"{tuple_delimiter}TRADE REPRESENTATIVE{tuple_delimiter}government official{tuple_delimiter}A government official responsible for preparing reports on trade policy and consulting with other officials and committees as required})
+{record_delimiter}
+("entity"{tuple_delimiter}SECRETARY OF THE TREASURY{tuple_delimiter}government official{tuple_delimiter}A government official who works alongside the Trade Representative in preparing trade policy reports and consulting with the Federal Reserve's Board of Governors})
+{record_delimiter}
+("entity"{tuple_delimiter}BOARD OF GOVERNORS OF THE FEDERAL RESERVE SYSTEM{tuple_delimiter}government official{tuple_delimiter}Officials who are consulted by the Trade Representative and the Secretary of the Treasury in the preparation of trade policy reports})
+{record_delimiter}
+("relationship"{tuple_delimiter}TRADE REPRESENTATIVE{tuple_delimiter}NATIONAL TRADE POLICY AGENDA{tuple_delimiter}The Trade Representative references the National Trade Policy Agenda for preparing certain reports{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}SECRETARY OF THE TREASURY{tuple_delimiter}NATIONAL TRADE POLICY AGENDA{tuple_delimiter}The Secretary of the Treasury references the National Trade Policy Agenda for preparing certain reports{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}TRADE REPRESENTATIVE{tuple_delimiter}SECRETARY OF THE TREASURY{tuple_delimiter}The Trade Representative and the Secretary of the Treasury collaborate on preparing trade policy reports and consulting with the Federal Reserve{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}TRADE REPRESENTATIVE{tuple_delimiter}BOARD OF GOVERNORS OF THE FEDERAL RESERVE SYSTEM{tuple_delimiter}The Trade Representative consults with the Board of Governors of the Federal Reserve System for report preparation{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}SECRETARY OF THE TREASURY{tuple_delimiter}BOARD OF GOVERNORS OF THE FEDERAL RESERVE SYSTEM{tuple_delimiter}The Secretary of the Treasury consults with the Board of Governors of the Federal Reserve System for report preparation{tuple_delimiter}9)
+{completion_delimiter}
+#############################
+
+
+Example 5:
+
+entity_types: [law, government official, military installation, foreign country, trade policy, legal amendment, national emergency, economic policy, reserve component, actuarial basis]
+text:
+Amendments 
+ 2021 —Par. (5). Pub. L. 116–283 added par. (5). 
+ 2018 —Pub. L. 115–232 renumbered section 8017 of this title as this section. 
+ 1994 —Pars. (3), (4). Pub. L. 103–337 added par. (3) and redesignated former par. (3) as (4). 
+ 1986 —Pub. L. 99–433 struck out subsec. (a) designation, substituted in par. (2) ", in the order prescribed by the Secretary of the Air Force and approved by the Secretary of Defense" for "in order of their length of service as such", and struck out subsec. (b) which read as follows: "Performance of the duties of the Secretary by the Chief of Staff or any officer of the Air Force designated under section 3347 of title 5 shall not be considered as the holding of a civil office within the meaning of section 973(b) of this title." 
+ 1968 —Subsec. (b). Pub. L. 90–235 substituted "section 973(b) of this title" for "section 8544(b) of this title". 
+ 1966 —Pub. L. 89–718 substituted "section 3347 of title 5" for "section 6 of title 5" wherever appearing.
+------------------------
+output:
+("entity"{tuple_delimiter}PUB. L. 116–283{tuple_delimiter}legal amendment{tuple_delimiter}Added paragraph (5) to the section in 2021)
+{record_delimiter}
+("entity"{tuple_delimiter}PUB. L. 115–232{tuple_delimiter}legal amendment{tuple_delimiter}Renumbered section 8017 of this title as this section in 2018)
+{record_delimiter}
+("entity"{tuple_delimiter}PUB. L. 103–337{tuple_delimiter}legal amendment{tuple_delimiter}Added paragraph (3) and redesignated former paragraph (3) as (4) in 1994)
+{record_delimiter}
+("entity"{tuple_delimiter}PUB. L. 99–433{tuple_delimiter}legal amendment{tuple_delimiter}Made changes to paragraph (2) and struck out subsection (b) in 1986)
+{record_delimiter}
+("entity"{tuple_delimiter}PUB. L. 90–235{tuple_delimiter}legal amendment{tuple_delimiter}Substituted "section 973(b) of this title" for "section 8544(b) of this title" in 1968)
+{record_delimiter}
+("entity"{tuple_delimiter}PUB. L. 89–718{tuple_delimiter}legal amendment{tuple_delimiter}Substituted "section 3347 of title 5" for "section 6 of title 5" wherever appearing in 1966)
+{record_delimiter}
+("relationship"{tuple_delimiter}PUB. L. 116–283{tuple_delimiter}PUB. L. 115–232{tuple_delimiter}Both legal amendments contributed to the evolution of the same section, with one adding content and the other renumbering it{tuple_delimiter}5)
+{record_delimiter}
+("relationship"{tuple_delimiter}PUB. L. 103–337{tuple_delimiter}PUB. L. 99–433{tuple_delimiter}Both legal amendments modified the structure or content of the same section at different times{tuple_delimiter}4)
+{record_delimiter}
+("relationship"{tuple_delimiter}PUB. L. 90–235{tuple_delimiter}PUB. L. 89–718{tuple_delimiter}Both legal amendments involved updates to referenced sections of the title, indicating a continuity in legislative updates over time{tuple_delimiter}3)
+{completion_delimiter}
+#############################
+
+
+
+-Real Data-
+######################
+entity_types: [law, government official, military installation, foreign country, trade policy, legal amendment, national emergency, economic policy, reserve component, actuarial basis]
+text: {input_text}
+######################
+output:
